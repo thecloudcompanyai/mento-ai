@@ -288,39 +288,39 @@ Respond helpfully based on their message and the context provided. If they're as
       <FloatingBlobs />
       
       <div className="relative z-10 h-screen flex flex-col">
-        {/* Header */}
-        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        {/* Mobile-Optimized Header */}
+        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <button 
                 onClick={() => onNavigate('dashboard')}
-                className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 hover:bg-white/30 transition-all duration-300 hover:scale-105 mr-4 lg:hidden"
+                className="p-2 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30 hover:bg-white/30 transition-all duration-300 hover:scale-105 mr-3 lg:hidden"
               >
-                <ArrowLeft className="w-5 h-5 text-[#334155]" />
+                <ArrowLeft className="w-4 h-4 text-[#334155]" />
               </button>
               <div>
-                <h1 className="font-sora font-semibold text-3xl text-[#334155] mb-2">
+                <h1 className="font-sora font-semibold text-xl sm:text-2xl lg:text-3xl text-[#334155] mb-1">
                   Mento AI
                 </h1>
-                <p className="font-inter text-lg text-[#334155]/70">
-                  Your personalized wellness companion powered by AI
+                <p className="font-inter text-sm sm:text-base lg:text-lg text-[#334155]/70">
+                  Your wellness companion
                 </p>
               </div>
             </div>
             
             <div className="flex items-center gap-2">
-              <div className="hidden sm:flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white/30">
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/30">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="font-inter text-sm text-[#334155]">AI Active</span>
+                <span className="font-inter text-xs text-[#334155] hidden sm:inline">AI Active</span>
               </div>
             </div>
           </div>
 
-          {/* User Context Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-            <div className="bg-[#A5E3D8]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#A5E3D8]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <Brain className="w-4 h-4 text-[#A5E3D8]" />
+          {/* Mobile-Optimized User Context Summary */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
+            <div className="bg-[#A5E3D8]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#A5E3D8]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-[#A5E3D8]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Mood</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">
@@ -328,9 +328,9 @@ Respond helpfully based on their message and the context provided. If they're as
               </p>
             </div>
             
-            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#FFF6B3]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-[#F59E0B]" />
+            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFF6B3]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-[#F59E0B]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Energy</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">
@@ -338,9 +338,9 @@ Respond helpfully based on their message and the context provided. If they're as
               </p>
             </div>
             
-            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#D2F8D2]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <MessageCircle className="w-4 h-4 text-[#22C55E]" />
+            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#D2F8D2]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 text-[#22C55E]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Check-ins</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">
@@ -348,9 +348,9 @@ Respond helpfully based on their message and the context provided. If they're as
               </p>
             </div>
             
-            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#C2E7FF]/30">
-              <div className="flex items-center gap-2 mb-1">
-                {user.mode === 'team' ? <Users className="w-4 h-4 text-[#3B82F6]" /> : <Heart className="w-4 h-4 text-[#3B82F6]" />}
+            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#C2E7FF]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                {user.mode === 'team' ? <Users className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" /> : <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" />}
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Mode</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80 capitalize">
@@ -360,27 +360,27 @@ Respond helpfully based on their message and the context provided. If they're as
           </div>
         </div>
 
-        {/* Chat Container */}
-        <div className="flex-1 mx-4 sm:mx-6 lg:mx-8 mb-4 bg-white/20 backdrop-blur-sm rounded-3xl border border-white/30 shadow-lg flex flex-col overflow-hidden">
+        {/* Mobile-Optimized Chat Container */}
+        <div className="flex-1 mx-3 sm:mx-4 lg:mx-8 mb-3 sm:mb-4 bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 shadow-lg flex flex-col overflow-hidden">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
             {messages.map((message) => (
-              <div key={message.id} className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex gap-4 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`flex-shrink-0 p-3 rounded-full ${message.type === 'user' ? 'bg-[#A5E3D8]' : 'bg-white/30'}`}>
+              <div key={message.id} className={`flex gap-2 sm:gap-3 lg:gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex gap-2 sm:gap-3 lg:gap-4 max-w-[90%] sm:max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`flex-shrink-0 p-2 sm:p-2.5 lg:p-3 rounded-full ${message.type === 'user' ? 'bg-[#A5E3D8]' : 'bg-white/30'}`}>
                     {message.type === 'user' ? (
-                      <UserIcon className="w-5 h-5 text-[#334155]" />
+                      <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155]" />
                     ) : (
                       getCategoryIcon(message.category)
                     )}
                   </div>
-                  <div className={`p-5 rounded-3xl ${
+                  <div className={`p-3 sm:p-4 lg:p-5 rounded-2xl sm:rounded-3xl ${
                     message.type === 'user' 
                       ? 'bg-[#A5E3D8] text-[#334155]' 
                       : 'bg-white/30 text-[#334155]'
                   } shadow-lg`}>
                     <p className="font-inter leading-relaxed whitespace-pre-wrap text-sm sm:text-base">{message.content}</p>
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center justify-between mt-3 sm:mt-4">
                       <p className="text-xs opacity-70">
                         {message.timestamp.toLocaleTimeString('en-US', { 
                           hour: '2-digit', 
@@ -388,7 +388,7 @@ Respond helpfully based on their message and the context provided. If they're as
                         })}
                       </p>
                       {message.type === 'ai' && message.category && (
-                        <span className="text-xs px-3 py-1 bg-white/20 rounded-full capitalize font-medium">
+                        <span className="text-xs px-2 py-1 bg-white/20 rounded-full capitalize font-medium">
                           {message.category}
                         </span>
                       )}
@@ -399,16 +399,16 @@ Respond helpfully based on their message and the context provided. If they're as
             ))}
             
             {isLoading && (
-              <div className="flex gap-4 justify-start">
-                <div className="flex gap-4 max-w-[85%]">
-                  <div className="flex-shrink-0 p-3 rounded-full bg-white/30">
-                    <Bot className="w-5 h-5 text-[#334155]" />
+              <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-start">
+                <div className="flex gap-2 sm:gap-3 lg:gap-4 max-w-[90%] sm:max-w-[85%]">
+                  <div className="flex-shrink-0 p-2 sm:p-2.5 lg:p-3 rounded-full bg-white/30">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155]" />
                   </div>
-                  <div className="p-5 rounded-3xl bg-white/30 text-[#334155] shadow-lg">
-                    <div className="flex gap-2">
-                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce"></div>
-                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="p-3 sm:p-4 lg:p-5 rounded-2xl sm:rounded-3xl bg-white/30 text-[#334155] shadow-lg">
+                    <div className="flex gap-1 sm:gap-2">
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -417,22 +417,22 @@ Respond helpfully based on their message and the context provided. If they're as
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts */}
+          {/* Mobile-Optimized Quick Prompts */}
           {showQuickPrompts && messages.length <= 1 && (
-            <div className="px-6 pb-4">
-              <p className="font-inter text-sm text-[#334155]/70 mb-4">✨ Try asking me about:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4">
+              <p className="font-inter text-xs sm:text-sm text-[#334155]/70 mb-3 sm:mb-4">✨ Try asking me about:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {quickPrompts.map((prompt, index) => {
                   const Icon = prompt.icon;
                   return (
                     <button
                       key={index}
                       onClick={() => handleQuickPrompt(prompt.text)}
-                      className={`p-4 ${prompt.color} rounded-2xl font-inter text-sm transition-all duration-300 text-left border backdrop-blur-sm hover:scale-105 hover:shadow-lg`}
+                      className={`p-3 sm:p-4 ${prompt.color} rounded-xl sm:rounded-2xl font-inter text-xs sm:text-sm transition-all duration-300 text-left border backdrop-blur-sm hover:scale-105 hover:shadow-lg active:scale-95`}
                     >
-                      <div className="flex items-center gap-3">
-                        <Icon className="w-5 h-5 text-[#334155]" />
-                        <span className="text-[#334155]">{prompt.text}</span>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155] flex-shrink-0" />
+                        <span className="text-[#334155] leading-tight">{prompt.text}</span>
                       </div>
                     </button>
                   );
@@ -441,59 +441,59 @@ Respond helpfully based on their message and the context provided. If they're as
             </div>
           )}
 
-          {/* Input */}
-          <div className="flex-shrink-0 p-6 border-t border-white/20">
-            <div className="flex gap-3">
+          {/* Mobile-Optimized Input */}
+          <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-t border-white/20">
+            <div className="flex gap-2 sm:gap-3">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me about your wellness patterns, get personalized insights, or share what's on your mind..."
-                className="flex-1 p-4 bg-white/50 border border-white/30 rounded-2xl font-inter text-[#334155] placeholder-[#334155]/50 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]/50 resize-none shadow-inner"
+                className="flex-1 p-3 sm:p-4 bg-white/50 border border-white/30 rounded-xl sm:rounded-2xl font-inter text-sm sm:text-base text-[#334155] placeholder-[#334155]/50 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]/50 resize-none shadow-inner"
                 rows={2}
                 disabled={isLoading}
               />
               <button 
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="flex-shrink-0 p-4 bg-[#A5E3D8] text-[#334155] rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="flex-shrink-0 p-3 sm:p-4 bg-[#A5E3D8] text-[#334155] rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-95"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* AI Capabilities Footer */}
-        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pb-24 lg:pb-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#D2F8D2]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="w-4 h-4 text-[#22C55E]" />
+        {/* Mobile-Optimized AI Capabilities Footer */}
+        <div className="flex-shrink-0 px-3 sm:px-4 lg:px-8 pb-20 sm:pb-24 lg:pb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#D2F8D2]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-[#22C55E]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Pattern Analysis</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">Mood & energy trends</p>
             </div>
             
-            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#FFF6B3]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <Lightbulb className="w-4 h-4 text-[#F59E0B]" />
+            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFF6B3]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4 text-[#F59E0B]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Smart Insights</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">Personalized tips</p>
             </div>
             
-            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#C2E7FF]/30">
-              <div className="flex items-center gap-2 mb-1">
-                <Heart className="w-4 h-4 text-[#3B82F6]" />
+            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#C2E7FF]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" />
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">Wellness Support</h4>
               </div>
               <p className="font-inter text-xs text-[#334155]/80">Balance & self-care</p>
             </div>
             
-            <div className="bg-[#FFDBD3]/20 backdrop-blur-sm p-3 rounded-2xl border border-[#FFDBD3]/30">
-              <div className="flex items-center gap-2 mb-1">
-                {user.mode === 'team' ? <Users className="w-4 h-4 text-[#F97316]" /> : <Sparkles className="w-4 h-4 text-[#F97316]" />}
+            <div className="bg-[#FFDBD3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFDBD3]/30">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                {user.mode === 'team' ? <Users className="w-3 h-3 sm:w-4 sm:h-4 text-[#F97316]" /> : <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-[#F97316]" />}
                 <h4 className="font-sora font-semibold text-xs text-[#334155]">
                   {user.mode === 'team' ? 'Team Culture' : 'Personal Growth'}
                 </h4>
