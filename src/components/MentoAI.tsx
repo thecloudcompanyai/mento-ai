@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Bot, User as UserIcon, Sparkles, Heart, Lightbulb, TrendingUp, Users, Brain, MessageCircle, Zap, Target } from 'lucide-react';
+import { ArrowLeft, Send, Bot, User as UserIcon } from 'lucide-react';
 import { User } from '../types';
 import FloatingBlobs from './FloatingBlobs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -14,7 +14,6 @@ interface Message {
   type: 'user' | 'ai';
   content: string;
   timestamp: Date;
-  category?: 'insight' | 'suggestion' | 'support' | 'analysis';
 }
 
 const MentoAI: React.FC<MentoAIProps> = ({ user, onNavigate }) => {
@@ -22,7 +21,6 @@ const MentoAI: React.FC<MentoAIProps> = ({ user, onNavigate }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [showQuickPrompts, setShowQuickPrompts] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Use the provided API key
@@ -166,8 +164,7 @@ Respond helpfully based on their message and the context provided. If they're as
         id: '1',
         type: 'ai',
         content: welcomeMessage,
-        timestamp: new Date(),
-        category: 'support'
+        timestamp: new Date()
       };
 
       setMessages([aiMessage]);
@@ -176,8 +173,7 @@ Respond helpfully based on their message and the context provided. If they're as
         id: '1',
         type: 'ai',
         content: `Hello ${user.name}! 👋 I'm Mento, your AI wellness companion. I'm here to help you maintain mental wellness while staying productive. I can analyze your mood patterns, provide personalized insights, and suggest ways to improve your wellbeing. How are you feeling today?`,
-        timestamp: new Date(),
-        category: 'support'
+        timestamp: new Date()
       };
       setMessages([fallbackMessage]);
     } finally {
@@ -198,7 +194,6 @@ Respond helpfully based on their message and the context provided. If they're as
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
-    setShowQuickPrompts(false);
 
     try {
       const aiResponse = await generateAIResponse(userMessage.content);
@@ -207,8 +202,7 @@ Respond helpfully based on their message and the context provided. If they're as
         id: (Date.now() + 1).toString(),
         type: 'ai',
         content: aiResponse,
-        timestamp: new Date(),
-        category: 'insight'
+        timestamp: new Date()
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -217,8 +211,7 @@ Respond helpfully based on their message and the context provided. If they're as
         id: (Date.now() + 1).toString(),
         type: 'ai',
         content: "I apologize, but I'm having trouble responding right now. Please try again! In the meantime, remember that small steps toward wellness make a big difference. 🤖",
-        timestamp: new Date(),
-        category: 'support'
+        timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -233,62 +226,12 @@ Respond helpfully based on their message and the context provided. If they're as
     }
   };
 
-  const handleQuickPrompt = (prompt: string) => {
-    setInputMessage(prompt);
-    setShowQuickPrompts(false);
-  };
-
-  const quickPrompts = [
-    {
-      text: "Analyze my recent mood patterns",
-      icon: TrendingUp,
-      color: "bg-[#C2E7FF]/20 border-[#C2E7FF]/30 hover:bg-[#C2E7FF]/30"
-    },
-    {
-      text: "How can I improve my energy levels?",
-      icon: Zap,
-      color: "bg-[#FFF6B3]/20 border-[#FFF6B3]/30 hover:bg-[#FFF6B3]/30"
-    },
-    {
-      text: "I'm feeling overwhelmed at work",
-      icon: Heart,
-      color: "bg-[#FFDBD3]/20 border-[#FFDBD3]/30 hover:bg-[#FFDBD3]/30"
-    },
-    {
-      text: "Tips for better work-life balance",
-      icon: Target,
-      color: "bg-[#D2F8D2]/20 border-[#D2F8D2]/30 hover:bg-[#D2F8D2]/30"
-    },
-    {
-      text: "Help me understand my journal insights",
-      icon: Brain,
-      color: "bg-[#A5E3D8]/20 border-[#A5E3D8]/30 hover:bg-[#A5E3D8]/30"
-    },
-    {
-      text: user.mode === 'team' ? "How can our team collaborate better?" : "What self-care practices suit me?",
-      icon: user.mode === 'team' ? Users : Sparkles,
-      color: "bg-white/20 border-white/30 hover:bg-white/30"
-    }
-  ];
-
-  const getCategoryIcon = (category?: string) => {
-    switch (category) {
-      case 'insight': return <Brain className="w-4 h-4 text-[#A5E3D8]" />;
-      case 'suggestion': return <Lightbulb className="w-4 h-4 text-[#F59E0B]" />;
-      case 'analysis': return <TrendingUp className="w-4 h-4 text-[#3B82F6]" />;
-      case 'support': return <Heart className="w-4 h-4 text-[#22C55E]" />;
-      default: return <Bot className="w-4 h-4 text-[#334155]" />;
-    }
-  };
-
-  const userContext = generateUserContext();
-
   return (
     <div className="relative min-h-screen lg:pl-72">
       <FloatingBlobs />
       
       <div className="relative z-10 h-screen flex flex-col">
-        {/* Mobile-Optimized Header */}
+        {/* Minimal Header */}
         <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -300,115 +243,58 @@ Respond helpfully based on their message and the context provided. If they're as
               </button>
               <div>
                 <h1 className="font-sora font-semibold text-xl sm:text-2xl lg:text-3xl text-[#334155] mb-1">
-                  Mento AI
+                  Chat with Mento
                 </h1>
                 <p className="font-inter text-sm sm:text-base lg:text-lg text-[#334155]/70">
-                  Your wellness companion
+                  Your AI wellness companion
                 </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/30">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="font-inter text-xs text-[#334155] hidden sm:inline">AI Active</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile-Optimized User Context Summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
-            <div className="bg-[#A5E3D8]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#A5E3D8]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-[#A5E3D8]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Mood</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">
-                {userContext.currentMood}/10
-              </p>
-            </div>
-            
-            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFF6B3]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-[#F59E0B]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Energy</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">
-                {userContext.currentEnergy}/10
-              </p>
-            </div>
-            
-            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#D2F8D2]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 text-[#22C55E]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Check-ins</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">
-                {userContext.totalCheckIns}
-              </p>
-            </div>
-            
-            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#C2E7FF]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                {user.mode === 'team' ? <Users className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" /> : <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" />}
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Mode</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80 capitalize">
-                {user.mode}
-              </p>
             </div>
           </div>
         </div>
 
-        {/* Mobile-Optimized Chat Container */}
+        {/* Full-Screen Chat Container */}
         <div className="flex-1 mx-3 sm:mx-4 lg:mx-8 mb-3 sm:mb-4 bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 shadow-lg flex flex-col overflow-hidden">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+          {/* Messages - Takes up most of the screen */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
             {messages.map((message) => (
-              <div key={message.id} className={`flex gap-2 sm:gap-3 lg:gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex gap-2 sm:gap-3 lg:gap-4 max-w-[90%] sm:max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`flex-shrink-0 p-2 sm:p-2.5 lg:p-3 rounded-full ${message.type === 'user' ? 'bg-[#A5E3D8]' : 'bg-white/30'}`}>
+              <div key={message.id} className={`flex gap-3 sm:gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex gap-3 sm:gap-4 max-w-[85%] sm:max-w-[80%] lg:max-w-[75%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`flex-shrink-0 p-3 sm:p-3.5 rounded-full ${message.type === 'user' ? 'bg-[#A5E3D8]' : 'bg-white/30'}`}>
                     {message.type === 'user' ? (
-                      <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155]" />
+                      <UserIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#334155]" />
                     ) : (
-                      getCategoryIcon(message.category)
+                      <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#334155]" />
                     )}
                   </div>
-                  <div className={`p-3 sm:p-4 lg:p-5 rounded-2xl sm:rounded-3xl ${
+                  <div className={`p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl ${
                     message.type === 'user' 
                       ? 'bg-[#A5E3D8] text-[#334155]' 
                       : 'bg-white/30 text-[#334155]'
                   } shadow-lg`}>
-                    <p className="font-inter leading-relaxed whitespace-pre-wrap text-sm sm:text-base">{message.content}</p>
-                    <div className="flex items-center justify-between mt-3 sm:mt-4">
-                      <p className="text-xs opacity-70">
-                        {message.timestamp.toLocaleTimeString('en-US', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </p>
-                      {message.type === 'ai' && message.category && (
-                        <span className="text-xs px-2 py-1 bg-white/20 rounded-full capitalize font-medium">
-                          {message.category}
-                        </span>
-                      )}
-                    </div>
+                    <p className="font-inter leading-relaxed whitespace-pre-wrap text-sm sm:text-base lg:text-lg">{message.content}</p>
+                    <p className="text-xs sm:text-sm opacity-70 mt-3 sm:mt-4">
+                      {message.timestamp.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>
             ))}
             
             {isLoading && (
-              <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-start">
-                <div className="flex gap-2 sm:gap-3 lg:gap-4 max-w-[90%] sm:max-w-[85%]">
-                  <div className="flex-shrink-0 p-2 sm:p-2.5 lg:p-3 rounded-full bg-white/30">
-                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155]" />
+              <div className="flex gap-3 sm:gap-4 justify-start">
+                <div className="flex gap-3 sm:gap-4 max-w-[85%] sm:max-w-[80%] lg:max-w-[75%]">
+                  <div className="flex-shrink-0 p-3 sm:p-3.5 rounded-full bg-white/30">
+                    <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#334155]" />
                   </div>
-                  <div className="p-3 sm:p-4 lg:p-5 rounded-2xl sm:rounded-3xl bg-white/30 text-[#334155] shadow-lg">
-                    <div className="flex gap-1 sm:gap-2">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl bg-white/30 text-[#334155] shadow-lg">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce"></div>
+                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-3 h-3 bg-[#A5E3D8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -417,90 +303,25 @@ Respond helpfully based on their message and the context provided. If they're as
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Mobile-Optimized Quick Prompts */}
-          {showQuickPrompts && messages.length <= 1 && (
-            <div className="px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4">
-              <p className="font-inter text-xs sm:text-sm text-[#334155]/70 mb-3 sm:mb-4">✨ Try asking me about:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                {quickPrompts.map((prompt, index) => {
-                  const Icon = prompt.icon;
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleQuickPrompt(prompt.text)}
-                      className={`p-3 sm:p-4 ${prompt.color} rounded-xl sm:rounded-2xl font-inter text-xs sm:text-sm transition-all duration-300 text-left border backdrop-blur-sm hover:scale-105 hover:shadow-lg active:scale-95`}
-                    >
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#334155] flex-shrink-0" />
-                        <span className="text-[#334155] leading-tight">{prompt.text}</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Mobile-Optimized Input */}
-          <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-t border-white/20">
-            <div className="flex gap-2 sm:gap-3">
+          {/* Large Input Area */}
+          <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 border-t border-white/20">
+            <div className="flex gap-3 sm:gap-4">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me about your wellness patterns, get personalized insights, or share what's on your mind..."
-                className="flex-1 p-3 sm:p-4 bg-white/50 border border-white/30 rounded-xl sm:rounded-2xl font-inter text-sm sm:text-base text-[#334155] placeholder-[#334155]/50 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]/50 resize-none shadow-inner"
-                rows={2}
+                className="flex-1 p-4 sm:p-5 lg:p-6 bg-white/50 border border-white/30 rounded-2xl sm:rounded-3xl font-inter text-sm sm:text-base lg:text-lg text-[#334155] placeholder-[#334155]/50 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]/50 resize-none shadow-inner min-h-[60px] sm:min-h-[80px]"
+                rows={3}
                 disabled={isLoading}
               />
               <button 
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="flex-shrink-0 p-3 sm:p-4 bg-[#A5E3D8] text-[#334155] rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-95"
+                className="flex-shrink-0 p-4 sm:p-5 lg:p-6 bg-[#A5E3D8] text-[#334155] rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-95"
               >
-                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Send className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile-Optimized AI Capabilities Footer */}
-        <div className="flex-shrink-0 px-3 sm:px-4 lg:px-8 pb-20 sm:pb-24 lg:pb-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-            <div className="bg-[#D2F8D2]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#D2F8D2]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-[#22C55E]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Pattern Analysis</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">Mood & energy trends</p>
-            </div>
-            
-            <div className="bg-[#FFF6B3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFF6B3]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4 text-[#F59E0B]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Smart Insights</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">Personalized tips</p>
-            </div>
-            
-            <div className="bg-[#C2E7FF]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#C2E7FF]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-[#3B82F6]" />
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">Wellness Support</h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">Balance & self-care</p>
-            </div>
-            
-            <div className="bg-[#FFDBD3]/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-[#FFDBD3]/30">
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                {user.mode === 'team' ? <Users className="w-3 h-3 sm:w-4 sm:h-4 text-[#F97316]" /> : <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-[#F97316]" />}
-                <h4 className="font-sora font-semibold text-xs text-[#334155]">
-                  {user.mode === 'team' ? 'Team Culture' : 'Personal Growth'}
-                </h4>
-              </div>
-              <p className="font-inter text-xs text-[#334155]/80">
-                {user.mode === 'team' ? 'Collaboration tips' : 'Healthy habits'}
-              </p>
             </div>
           </div>
         </div>
