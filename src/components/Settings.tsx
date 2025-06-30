@@ -1,52 +1,69 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Bell, Users, Calendar, Slack, Download, RotateCcw, LogOut } from 'lucide-react';
 import { User as UserType } from '../types';
+import { useAuth } from '../hooks/useAuth';
 import FloatingBlobs from './FloatingBlobs';
 
 interface SettingsProps {
   user: UserType;
-  setUser: (user: UserType) => void;
-  onNavigate: (view: 'dashboard' | 'landing') => void;
+  onUpdateProfile: (updates: Partial<Pick<UserType, 'name' | 'mode' | 'dailyReminderTime'>>) => Promise<any>;
+  onNavigate: (view: 'dashboard') => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ user, setUser, onNavigate }) => {
+const Settings: React.FC<SettingsProps> = ({ user, onUpdateProfile, onNavigate }) => {
+  const { signOut } = useAuth();
   const [name, setName] = useState(user.name);
   const [reminderTime, setReminderTime] = useState(user.dailyReminderTime);
   const [mode, setMode] = useState<'solo' | 'team'>(user.mode);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    setUser({
-      ...user,
-      name,
-      dailyReminderTime: reminderTime,
-      mode
-    });
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onUpdateProfile({
+        name,
+        dailyReminderTime: reminderTime,
+        mode
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleExport = () => {
     const data = {
+      profile: {
+        name: user.name,
+        email: user.email,
+        mode: user.mode
+      },
       moodHistory: user.moodHistory,
       energyHistory: user.energyHistory,
-      checkIns: user.lastCheckIn ? [user.lastCheckIn] : []
+      checkIns: user.lastCheckIn ? [user.lastCheckIn] : [],
+      journalEntries: user.journalEntries.map(entry => ({
+        ...entry,
+        timestamp: entry.timestamp.toISOString()
+      }))
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'mento-data-export.json';
+    a.download = `mento-data-export-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const handleReset = () => {
-    if (confirm('Are you sure you want to reset all your insights? This cannot be undone.')) {
-      setUser({
-        ...user,
-        moodHistory: [],
-        energyHistory: [],
-        lastCheckIn: null
-      });
+  const handleSignOut = async () => {
+    if (confirm('Are you sure you want to sign out?')) {
+      try {
+        await signOut();
+      } catch (error) {
+        console.error('Error signing out:', error);
+      }
     }
   };
 
@@ -90,6 +107,16 @@ const Settings: React.FC<SettingsProps> = ({ user, setUser, onNavigate }) => {
                   onChange={(e) => setName(e.target.value)}
                   onBlur={handleSave}
                   className="w-full p-4 bg-white/50 border border-white/30 rounded-2xl font-inter text-[#334155] focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]/50"
+                />
+              </div>
+
+              <div>
+                <label className="block font-inter font-medium text-[#334155] mb-2">Email</label>
+                <input 
+                  type="email"
+                  value={user.email}
+                  disabled
+                  className="w-full p-4 bg-white/30 border border-white/30 rounded-2xl font-inter text-[#334155]/70 cursor-not-allowed"
                 />
               </div>
               
@@ -181,26 +208,24 @@ const Settings: React.FC<SettingsProps> = ({ user, setUser, onNavigate }) => {
                 className="w-full p-4 bg-white/30 rounded-2xl font-inter text-[#334155] flex items-center gap-3 hover:bg-white/50 transition-all duration-300"
               >
                 <Download className="w-5 h-5" />
-                Export mood history
-              </button>
-              <button 
-                onClick={handleReset}
-                className="w-full p-4 bg-[#FFDBD3]/30 rounded-2xl font-inter text-[#334155] flex items-center gap-3 hover:bg-[#FFDBD3]/50 transition-all duration-300"
-              >
-                <RotateCcw className="w-5 h-5" />
-                Reset insights
+                Export all data
               </button>
             </div>
           </div>
 
-          {/* Logout */}
-          <div className="text-center">
+          {/* Account Actions */}
+          <div className="bg-white/20 backdrop-blur-sm p-8 rounded-3xl border border-white/30 shadow-lg">
+            <div className="flex items-center gap-3 mb-6">
+              <LogOut className="w-6 h-6 text-[#A5E3D8]" />
+              <h3 className="font-sora font-semibold text-xl text-[#334155]">Account</h3>
+            </div>
+            
             <button 
-              onClick={() => onNavigate('landing')}
-              className="group bg-white/30 text-[#334155] px-8 py-4 rounded-2xl font-inter font-medium border border-white/30 hover:bg-white/50 transition-all duration-300 hover:scale-105 flex items-center gap-3 mx-auto"
+              onClick={handleSignOut}
+              className="w-full p-4 bg-[#FFDBD3]/30 rounded-2xl font-inter text-[#334155] flex items-center gap-3 hover:bg-[#FFDBD3]/50 transition-all duration-300"
             >
               <LogOut className="w-5 h-5" />
-              🚪 Log out
+              🚪 Sign Out
             </button>
           </div>
         </div>

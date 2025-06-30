@@ -5,16 +5,17 @@ import FloatingBlobs from './FloatingBlobs';
 
 interface CheckInProps {
   user: User;
-  setUser: (user: User) => void;
+  onSaveCheckIn: (checkIn: Omit<CheckInData, 'id' | 'timestamp'>) => Promise<any>;
   onNavigate: (view: 'dashboard') => void;
 }
 
-const CheckIn: React.FC<CheckInProps> = ({ user, setUser, onNavigate }) => {
+const CheckIn: React.FC<CheckInProps> = ({ user, onSaveCheckIn, onNavigate }) => {
   const [mood, setMood] = useState<number>(7);
   const [energy, setEnergy] = useState<number>(7);
   const [notes, setNotes] = useState<string>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const moodEmojis = ['😔', '😕', '😐', '🙂', '😊'];
   const tags = ['Work', 'Personal', 'Health', 'Focus', 'Social'];
@@ -35,29 +36,30 @@ const CheckIn: React.FC<CheckInProps> = ({ user, setUser, onNavigate }) => {
     );
   };
 
-  const handleSubmit = () => {
-    const checkInData: CheckInData = {
-      mood,
-      energy,
-      notes: notes.trim() || undefined,
-      tags: selectedTags,
-      timestamp: new Date()
-    };
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      const checkInData = {
+        mood,
+        energy,
+        notes: notes.trim() || undefined,
+        tags: selectedTags,
+      };
 
-    const updatedUser = {
-      ...user,
-      lastCheckIn: checkInData,
-      moodHistory: [...user.moodHistory, { date: new Date().toISOString().split('T')[0], mood }],
-      energyHistory: [...user.energyHistory, { date: new Date().toISOString().split('T')[0], energy }]
-    };
+      await onSaveCheckIn(checkInData);
+      setIsSubmitted(true);
 
-    setUser(updatedUser);
-    setIsSubmitted(true);
-
-    // Auto navigate back after showing success message
-    setTimeout(() => {
-      onNavigate('dashboard');
-    }, 2000);
+      // Auto navigate back after showing success message
+      setTimeout(() => {
+        onNavigate('dashboard');
+      }, 2000);
+    } catch (error) {
+      console.error('Error saving check-in:', error);
+      // You could add error handling UI here
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -195,10 +197,20 @@ const CheckIn: React.FC<CheckInProps> = ({ user, setUser, onNavigate }) => {
           <div className="text-center">
             <button 
               onClick={handleSubmit}
-              className="group bg-[#A5E3D8] text-[#334155] px-12 py-6 rounded-2xl font-inter font-medium text-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 flex items-center gap-3 mx-auto"
+              disabled={isSubmitting}
+              className="group bg-[#A5E3D8] text-[#334155] px-12 py-6 rounded-2xl font-inter font-medium text-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 flex items-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <Check className="w-6 h-6" />
-              Sync My State
+              {isSubmitting ? (
+                <>
+                  <div className="w-6 h-6 border-2 border-[#334155]/30 border-t-[#334155] rounded-full animate-spin"></div>
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <Check className="w-6 h-6" />
+                  Sync My State
+                </>
+              )}
             </button>
           </div>
         </div>

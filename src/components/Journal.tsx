@@ -5,11 +5,13 @@ import FloatingBlobs from './FloatingBlobs';
 
 interface JournalProps {
   user: User;
-  setUser: (user: User) => void;
+  onSaveEntry: (entry: Omit<JournalEntry, 'id' | 'timestamp'>) => Promise<any>;
+  onUpdateEntry: (entryId: string, updates: Partial<Omit<JournalEntry, 'id' | 'timestamp'>>) => Promise<any>;
+  onDeleteEntry: (entryId: string) => Promise<any>;
   onNavigate: (view: 'dashboard') => void;
 }
 
-const Journal: React.FC<JournalProps> = ({ user, setUser, onNavigate }) => {
+const Journal: React.FC<JournalProps> = ({ user, onSaveEntry, onUpdateEntry, onDeleteEntry, onNavigate }) => {
   const [isWriting, setIsWriting] = useState(false);
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
   const [title, setTitle] = useState('');
@@ -17,6 +19,7 @@ const Journal: React.FC<JournalProps> = ({ user, setUser, onNavigate }) => {
   const [mood, setMood] = useState(7);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const availableTags = ['Gratitude', 'Reflection', 'Goals', 'Challenges', 'Growth', 'Relationships', 'Work', 'Health'];
 
@@ -36,34 +39,36 @@ const Journal: React.FC<JournalProps> = ({ user, setUser, onNavigate }) => {
     );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim() || !content.trim()) return;
 
-    const entry: JournalEntry = {
-      id: editingEntry?.id || Date.now().toString(),
-      title: title.trim(),
-      content: content.trim(),
-      mood,
-      tags: selectedTags,
-      timestamp: editingEntry?.timestamp || new Date()
-    };
+    setIsSaving(true);
+    try {
+      const entryData = {
+        title: title.trim(),
+        content: content.trim(),
+        mood,
+        tags: selectedTags,
+      };
 
-    const updatedEntries = editingEntry 
-      ? user.journalEntries.map(e => e.id === editingEntry.id ? entry : e)
-      : [entry, ...user.journalEntries];
+      if (editingEntry) {
+        await onUpdateEntry(editingEntry.id, entryData);
+      } else {
+        await onSaveEntry(entryData);
+      }
 
-    setUser({
-      ...user,
-      journalEntries: updatedEntries
-    });
-
-    // Reset form
-    setTitle('');
-    setContent('');
-    setMood(7);
-    setSelectedTags([]);
-    setIsWriting(false);
-    setEditingEntry(null);
+      // Reset form
+      setTitle('');
+      setContent('');
+      setMood(7);
+      setSelectedTags([]);
+      setIsWriting(false);
+      setEditingEntry(null);
+    } catch (error) {
+      console.error('Error saving journal entry:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleEdit = (entry: JournalEntry) => {
@@ -75,12 +80,13 @@ const Journal: React.FC<JournalProps> = ({ user, setUser, onNavigate }) => {
     setIsWriting(true);
   };
 
-  const handleDelete = (entryId: string) => {
+  const handleDelete = async (entryId: string) => {
     if (confirm('Are you sure you want to delete this journal entry?')) {
-      setUser({
-        ...user,
-        journalEntries: user.journalEntries.filter(e => e.id !== entryId)
-      });
+      try {
+        await onDeleteEntry(entryId);
+      } catch (error) {
+        console.error('Error deleting journal entry:', error);
+      }
     }
   };
 
@@ -187,10 +193,17 @@ const Journal: React.FC<JournalProps> = ({ user, setUser, onNavigate }) => {
             <div className="text-center">
               <button 
                 onClick={handleSave}
-                disabled={!title.trim() || !content.trim()}
+                disabled={!title.trim() || !content.trim() || isSaving}
                 className="group bg-[#A5E3D8] text-[#334155] px-12 py-4 rounded-2xl font-inter font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                {editingEntry ? '✏️ Update Entry' : '💾 Save Entry'}
+                {isSaving ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-[#334155]/30 border-t-[#334155] rounded-full animate-spin"></div>
+                    Saving...
+                  </div>
+                ) : (
+                  editingEntry ? '✏️ Update Entry' : '💾 Save Entry'
+                )}
               </button>
             </div>
           </div>

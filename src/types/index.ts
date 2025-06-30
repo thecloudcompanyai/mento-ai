@@ -1,4 +1,6 @@
 export interface User {
+  id: string;
+  email: string;
   name: string;
   mode: 'solo' | 'team';
   dailyReminderTime: string;
@@ -9,6 +11,7 @@ export interface User {
 }
 
 export interface CheckInData {
+  id?: string;
   mood: number;
   energy: number;
   notes?: string;
@@ -41,4 +44,9 @@ export interface TeamMember {
   mood: number;
   energy: number;
   lastActive: Date;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
 }
