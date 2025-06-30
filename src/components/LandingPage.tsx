@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Brain, Users, Zap, Heart, ArrowRight } from 'lucide-react';
 import FloatingBlobs from './FloatingBlobs';
 
@@ -7,6 +7,21 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+  const [showJoinModal, setShowJoinModal] = React.useState(false);
+  const [roomCodeInput, setRoomCodeInput] = React.useState('');
+  const [joinError, setJoinError] = React.useState('');
+
+  const handleJoinTeam = () => {
+    const savedCode = localStorage.getItem('mento-room-code');
+    if (roomCodeInput.trim().toUpperCase() === savedCode) {
+      setJoinError('');
+      setShowJoinModal(false);
+      onNavigate('team');
+    } else {
+      setJoinError('Invalid room code.');
+    }
+  };
+
   return (
     <div className="relative min-h-screen">
       <FloatingBlobs />
@@ -37,12 +52,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               🧘 Start Solo
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            
             <button 
               onClick={() => onNavigate('team')}
+              className="group bg-[#A5E3D8] text-[#334155] px-8 py-4 rounded-2xl font-inter font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8DD3C7] hover:scale-105 flex items-center gap-2"
+            >
+              🧑‍🤝‍🧑 Create a Team Space
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button
+              onClick={() => setShowJoinModal(true)}
               className="group bg-white/20 backdrop-blur-sm text-[#334155] px-8 py-4 rounded-2xl font-inter font-medium text-lg border border-white/30 hover:bg-white/30 transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
-              🤝 Create a Team Space
+              🤝 Join a Team Space
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -81,6 +102,36 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+
+      {showJoinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-xs flex flex-col gap-4">
+            <h4 className="font-sora font-semibold text-lg text-[#334155]">Join a Team</h4>
+            <input
+              type="text"
+              className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8] font-mono tracking-widest"
+              placeholder="Enter room code"
+              value={roomCodeInput}
+              onChange={e => setRoomCodeInput(e.target.value)}
+            />
+            {joinError && <div className="text-red-500 text-sm">{joinError}</div>}
+            <div className="flex gap-2">
+              <button
+                className="bg-[#A5E3D8] text-[#334155] px-4 py-2 rounded-lg font-inter font-medium flex-1 hover:bg-[#8DD3C7]"
+                onClick={handleJoinTeam}
+              >
+                Join
+              </button>
+              <button
+                className="bg-gray-200 text-[#334155] px-4 py-2 rounded-lg font-inter font-medium flex-1 hover:bg-gray-300"
+                onClick={() => setShowJoinModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

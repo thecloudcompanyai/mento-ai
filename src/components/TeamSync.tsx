@@ -1,18 +1,34 @@
-import React from 'react';
+import * as React from 'react';
 import { ArrowLeft, TrendingUp, Heart, UserPlus } from 'lucide-react';
 import FloatingBlobs from './FloatingBlobs';
+
+interface TeamMember {
+  name: string;
+  mood: number;
+  energy: number;
+  status: string;
+}
 
 interface TeamSyncProps {
   onNavigate: (view: 'dashboard') => void;
 }
 
 const TeamSync: React.FC<TeamSyncProps> = ({ onNavigate }) => {
-  const teamMembers = [
+  const [teamMembers, setTeamMembers] = React.useState<TeamMember[]>([
     { name: 'Alex', mood: 8, energy: 7, status: 'focused' },
     { name: 'Sam', mood: 6, energy: 5, status: 'calm' },
     { name: 'Jordan', mood: 4, energy: 3, status: 'burnout' },
     { name: 'Casey', mood: 9, energy: 9, status: 'energized' }
-  ];
+  ]);
+  const [showInviteModal, setShowInviteModal] = React.useState(false);
+  const [inviteName, setInviteName] = React.useState('');
+  const [roomCode] = React.useState(() => {
+    const saved = localStorage.getItem('mento-room-code');
+    if (saved) return saved;
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    localStorage.setItem('mento-room-code', code);
+    return code;
+  });
 
   const getMoodEmoji = (mood: number) => {
     if (mood >= 8) return '😊';
@@ -32,8 +48,8 @@ const TeamSync: React.FC<TeamSyncProps> = ({ onNavigate }) => {
     }
   };
 
-  const avgMood = Math.round(teamMembers.reduce((sum, member) => sum + member.mood, 0) / teamMembers.length);
-  const energySync = Math.round((teamMembers.filter(m => m.energy >= 6).length / teamMembers.length) * 100);
+  const avgMood = Math.round(teamMembers.reduce((sum: number, member: TeamMember) => sum + member.mood, 0) / teamMembers.length);
+  const energySync = Math.round((teamMembers.filter((m: TeamMember) => m.energy >= 6).length / teamMembers.length) * 100);
 
   return (
     <div className="relative min-h-screen lg:pl-72">
@@ -55,6 +71,10 @@ const TeamSync: React.FC<TeamSyncProps> = ({ onNavigate }) => {
             <p className="font-inter text-lg text-[#334155]/70">
               Stay connected with your team's wellbeing
             </p>
+          </div>
+          <div className="ml-auto flex flex-col items-end">
+            <span className="font-mono text-xs text-[#334155]/60">Room Code:</span>
+            <span className="font-mono text-lg bg-white/40 px-2 py-1 rounded-lg text-[#334155] tracking-widest select-all">{roomCode}</span>
           </div>
         </div>
 
@@ -93,7 +113,7 @@ const TeamSync: React.FC<TeamSyncProps> = ({ onNavigate }) => {
           <h3 className="font-sora font-semibold text-xl text-[#334155] mb-6">Team Vibe</h3>
           
           <div className="grid sm:grid-cols-2 gap-4">
-            {teamMembers.map((member, index) => (
+            {teamMembers.map((member: TeamMember, index: number) => (
               <div key={index} className={`p-4 rounded-2xl border backdrop-blur-sm ${getStatusColor(member.status)}`}>
                 <div className="flex items-center justify-between">
                   <div>
@@ -126,13 +146,52 @@ const TeamSync: React.FC<TeamSyncProps> = ({ onNavigate }) => {
               Send Gratitude
             </button>
             
-            <button className="group bg-white/30 text-[#334155] px-6 py-3 rounded-2xl font-inter font-medium border border-white/30 hover:bg-white/50 transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <button
+              className="group bg-white/30 text-[#334155] px-6 py-3 rounded-2xl font-inter font-medium border border-white/30 hover:bg-white/50 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              onClick={() => setShowInviteModal(true)}
+            >
               <UserPlus className="w-5 h-5" />
               Invite Member
             </button>
           </div>
         </div>
       </div>
+
+      {showInviteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-xs flex flex-col gap-4">
+            <h4 className="font-sora font-semibold text-lg text-[#334155]">Invite to Team</h4>
+            <p className="text-sm text-[#334155]/70">Share this room code to join: <span className='font-mono bg-gray-100 px-2 py-1 rounded'>{roomCode}</span></p>
+            <input
+              type="text"
+              className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A5E3D8]"
+              placeholder="Enter member name"
+              value={inviteName}
+              onChange={e => setInviteName(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <button
+                className="bg-[#A5E3D8] text-[#334155] px-4 py-2 rounded-lg font-inter font-medium flex-1 hover:bg-[#8DD3C7]"
+                onClick={() => {
+                  if (inviteName.trim()) {
+                    setTeamMembers([...teamMembers, { name: inviteName.trim(), mood: 5, energy: 5, status: 'calm' }]);
+                    setInviteName('');
+                    setShowInviteModal(false);
+                  }
+                }}
+              >
+                Add Member
+              </button>
+              <button
+                className="bg-gray-200 text-[#334155] px-4 py-2 rounded-lg font-inter font-medium flex-1 hover:bg-gray-300"
+                onClick={() => setShowInviteModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
